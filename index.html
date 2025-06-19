@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Site</title>
+    <style>
+        /* Основные стили */
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Контейнер для контента */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* Шапка сайта */
+        header {
+            background-color: rgba(17, 17, 17, 0.9);
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        /* Навигация */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        nav ul li {
+            margin-left: 25px;
+        }
+        
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s;
+            padding: 5px 10px;
+            position: relative;
+        }
+        
+        nav a:hover {
+            color: #4CAF50;
+        }
+        
+        /* Активная ссылка */
+        nav a.active {
+            color: #4CAF50;
+        }
+        
+        nav a.active::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: #4CAF50;
+            bottom: -5px;
+            left: 0;
+            animation: underline 0.3s ease-out;
+        }
+        
+        @keyframes underline {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        /* Основной контент */
+        main {
+            padding-top: 80px;
+            perspective: 1000px;
+        }
+        
+        /* Секции */
+        section {
+            padding: 100px 0;
+            min-height: 100vh;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s ease-in-out;
+            box-sizing: border-box;
+        }
+        
+        /* Эффект глубины для фона */
+        section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+            z-index: -1;
+            transform: translateZ(-50px) scale(1.1);
+            opacity: 0.8;
+        }
+        
+        /* Подвал */
+        footer {
+            background-color: #111111;
+            padding: 30px 0;
+            text-align: center;
+            border-top: 1px solid #333;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Заголовки */
+        h1, h2, h3 {
+            color: #ffffff;
+            margin-top: 0;
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+        }
+        
+        h2 {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            background-color: #4CAF50;
+            bottom: -15px;
+            left: 0;
+            transform-origin: left;
+            animation: lineGrow 1s ease-out forwards;
+        }
+        
+        @keyframes lineGrow {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+        
+        /* Кнопка */
+        .btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.4s;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 10%, rgba(255,255,255,0.2) 50%, transparent 90%);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+        
+        .btn:hover::after {
+            transform: translateX(100%);
+        }
+        
+        /* Анимация появления */
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeInUp 1s ease-out forwards;
+        }
+        
+        /* Эффект параллакса */
+        .parallax-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background-size: cover;
+            background-position: center;
+            transform: translateZ(-100px) scale(2);
+            opacity: 0.2;
+        }
+        
+        /* Специфичные стили для секций */
+        #home {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, #000000 0%, #111111 100%);
+        }
+        
+        #home .container {
+            max-width: 800px;
+        }
+        
+        #about {
+            background: linear-gradient(135deg, #111111 0%, #000000 100%);
+        }
+        
+        /* Карточки */
+        .card {
+            background: rgba(30, 30, 30, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(5px);
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+        
+        /* Форма */
+        form {
+            max-width: 600px;
+            margin-top: 40px;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: rgba(30, 30, 30, 0.7);
+            border: 1px solid #333;
+            color: white;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+        }
+        
+        /* Анимация камеры */
+        .camera-move {
+            animation: cameraMove 1s ease-in-out forwards;
+        }
+        
+        @keyframes cameraMove {
+            0% {
+                transform: translateY(50px) rotateX(5deg);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) rotateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Сообщение об успешной отправке */
+        .success-message {
+            display: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+    <!-- Добавляем EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        // Инициализация EmailJS с вашим User ID
+        (function() {
+            emailjs.init("YOUR_EMAILJS_USER_ID"); // Замените на ваш реальный User ID
+        })();
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo" style="font-size: 1.5em; font-weight: bold; color: #4CAF50;">DarkSite</div>
+                <ul>
+                    <li><a href="#home" class="active">Главная</a></li>
+                    <li><a href="#about">О нас</a></li>
+                    <li><a href="#services">Услуги</a></li>
+                    <li><a href="#contact">Контакты</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <section id="home" class="camera-move">
+            <div class="parallax-bg" style="background-image: url('https://steamuserimages-a.akamaihd.net/ugc/541895114147265250/CA16426DDF8C1F1BC89951842C98D71762D0083D/');"></div>
+            <div class="container">
+                <h1>Инновационные решения</h1>
+                <p style="font-size: 1.2em; margin-bottom: 30px;">Мы создаем будущее сегодня. Наши технологии меняют мир к лучшему.</p>
+                <a href="#about" class="btn">Узнать больше</a>
+            </div>
+        </section>
+        
+        <section id="services">
+            <div class="container fade-in">
+                <h2>Наши услуги</h2>
+                <p style="font-size: 1.1em; max-width: 800px;">Мы предлагаем комплексные решения для вашего бизнеса, используя передовые технологии и инновационные подходы.</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 50px;">
+                    <div class="card">
+                        <h3>Веб-разработка</h3>
+                        <p>Создание современных веб-приложений с использованием последних технологий.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Мобильные приложения</h3>
+                        <p>Разработка кроссплатформенных мобильных приложений для iOS и Android.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Искусственный интеллект</h3>
+                        <p>Внедрение AI-решений для автоматизации бизнес-процессов.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="about">
+            <div class="parallax-bg" style="background-image: url('https://yandex.ru/images/search?from=tabbar&img_url=https%3A%2F%2Fi.ytimg.com%2Fvi%2FpAEhGp0UZlY%2Fmaxresdefault.jpg&lr=11181&pos=45&rpt=simage&text=darkrp');"></div>
+            <div class="container fade-in">
+                <h2>О нас</h2>
+                <p style="font-size: 1.1em; max-width: 800px;">Мы - команда энтузиастов, преданных своему делу и стремящихся создавать продукты, которые меняют жизнь людей к лучшему.</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 50px;">
+                    <div class="card">
+                        <h3>Наша история</h3>
+                        <p>Основанная в 2010 году, наша компания выросла из небольшого стартапа в лидера отрасли с международным признанием.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Наша миссия</h3>
+                        <p>Мы стремимся сделать технологии доступными и полезными для каждого, создавая интуитивно понятные и мощные решения.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Наша команда</h3>
+                        <p>Более 100 профессионалов в различных областях работают вместе, чтобы воплощать в жизнь самые смелые идеи.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="contact">
+            <div class="container fade-in">
+                <h2>Контакты</h2>
+                <p style="font-size: 1.1em; max-width: 800px; margin-bottom: 30px;">Свяжитесь с нами для обсуждения вашего проекта или получения дополнительной информации о наших услугах.</p>
+                
+                <form id="contactForm">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div>
+                            <label for="name" style="display: block; margin-bottom: 8px;">Имя</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div>
+                            <label for="email" style="display: block; margin-bottom: 8px;">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label for="subject" style="display: block; margin-bottom: 8px;">Тема</label>
+                        <input type="text" id="subject" name="subject" required>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label for="message" style="display: block; margin-bottom: 8px;">Сообщение</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Отправить сообщение</button>
+                    <div id="successMessage" class="success-message">Спасибо! Ваше сообщение отправлено. Мы свяжемся с вами в ближайшее время.</div>
+                </form>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.2em; font-weight: bold; color: #4CAF50;">DarkSite</div>
+                <div style="display: flex; gap: 20px;">
+                    <a href="#" style="color: white; text-decoration: none;">Политика конфиденциальности</a>
+                    <a href="#" style="color: white; text-decoration: none;">Условия использования</a>
+                </div>
+            </div>
+            <p style="margin-top: 20px; color: #aaa;">&copy; 2023 DarkSite. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Плавная прокрутка с анимацией камеры
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                // Удаляем активный класс у всех ссылок
+                document.querySelectorAll('nav a').forEach(l => l.classList.remove('active'));
+                // Добавляем активный класс текущей ссылке
+                this.classList.add('active');
+                
+                // Добавляем анимацию камеры к целевой секции
+                targetSection.classList.remove('fade-in', 'camera-move');
+                void targetSection.offsetWidth; // Триггер reflow
+                targetSection.classList.add('camera-move');
+                
+                // Плавная прокрутка
+                window.scrollTo({
+                    top: targetSection.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Анимация при прокрутке
+        const animateOnScroll = () => {
+            const sections = document.querySelectorAll('section');
+            const windowHeight = window.innerHeight;
+            const scrollPosition = window.scrollY || window.pageYOffset;
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                
+                // Если секция в поле зрения
+                if (scrollPosition + windowHeight > sectionTop + 100 && 
+                    scrollPosition < sectionTop + sectionHeight - 100) {
+                    
+                    const content = section.querySelector('.container');
+                    if (content && !content.classList.contains('fade-in')) {
+                        content.classList.add('fade-in');
+                    }
+                    
+                    // Обновляем активную ссылку в навигации
+                    const id = section.getAttribute('id');
+                    const correspondingLink = document.querySelector(`nav a[href="#${id}"]`);
+                    if (correspondingLink) {
+                        document.querySelectorAll('nav a').forEach(l => l.classList.remove('active'));
+                        correspondingLink.classList.add('active');
+                    }
+                }
+            });
+        };
+        
+        // Запускаем при загрузке и прокрутке
+        window.addEventListener('load', animateOnScroll);
+        window.addEventListener('scroll', animateOnScroll);
+        
+        // Обработка формы с EmailJS
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const successMessage = document.getElementById('successMessage');
+            
+            // Отправка формы через EmailJS
+            emailjs.sendForm('YOUR_EMAILJS_SERVICE_ID', 'YOUR_EMAILJS_TEMPLATE_ID', form)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    successMessage.style.display = 'block';
+                    form.reset();
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 5000);
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    alert('Произошла ошибка при отправке формы. Пожалуйста, попробуйте еще раз.');
+                });
+        });
+
+        // Альтернативная обработка формы для тестирования без EmailJS
+        /*
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+            this.reset();
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 5000);
+        });
+        */
+    </script>
+</body>
+</html>
