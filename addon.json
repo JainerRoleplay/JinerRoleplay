@@ -1,0 +1,10 @@
+{
+	"title": "Advanced Admin Menu",
+	"type": "ServerContent",
+	"tags": ["admin", "management", "utility"],
+	"ignore": [
+		"*.psd",
+		"*.vcproj",
+		"*.svn*"
+	]
+}
