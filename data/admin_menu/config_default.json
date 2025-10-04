@@ -1,0 +1,56 @@
+{
+  "AdminLevels": {
+    "superadmin": {
+      "Name": "Супер Администратор",
+      "Level": 100,
+      "Color": [255, 0, 0],
+      "Commands": "*"
+    },
+    "admin": {
+      "Name": "Администратор", 
+      "Level": 50,
+      "Color": [255, 128, 0],
+      "Commands": [
+        "kick", "ban", "unban", "teleport", "bring", "goto",
+        "freeze", "unfreeze", "mute", "unmute", "noclip", "god",
+        "clearchat", "changemap", "givemoney"
+      ]
+    },
+    "moderator": {
+      "Name": "Модератор",
+      "Level": 25, 
+      "Color": [0, 255, 0],
+      "Commands": [
+        "kick", "teleport", "bring", "freeze", "unfreeze", "mute", "unmute"
+      ]
+    },
+    "helper": {
+      "Name": "Помощник",
+      "Level": 10,
+      "Color": [0, 128, 255],
+      "Commands": [
+        "teleport", "bring", "freeze", "unfreeze"
+      ]
+    }
+  },
+  "Settings": {
+    "LogActions": true,
+    "NotifyPlayers": true,
+    "SaveBans": true,
+    "BanDuration": {
+      "default": 60,
+      "max": 10080
+    },
+    "MenuKey": "F4",
+    "EnableSounds": true,
+    "ChatCommands": ["!admin", "/admin", "!menu", "/menu"]
+  },
+  "Messages": {
+    "WelcomeMessage": "Добро пожаловать на сервер!",
+    "BanMessage": "Вы забанены на этом сервере!",
+    "KickMessage": "Вы кикнуты с сервера!",
+    "NoPermission": "У вас нет прав для выполнения этого действия",
+    "PlayerNotFound": "Игрок не найден",
+    "InvalidCommand": "Неверная команда"
+  }
+}
