@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garry's Mod Admin Menu</title>
+    <style>
+        /* Основные стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Контейнер админ меню */
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Шапка админ панели */
+        .admin-header {
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            border: 1px solid #333;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .admin-header h1 {
+            color: #00ff88;
+            font-size: 2.5em;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .admin-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .server-info {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            background: rgba(0, 255, 136, 0.1);
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .admin-level {
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+
+        /* Основная сетка меню */
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* Карточки меню */
+        .admin-card {
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #333;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 255, 136, 0.2);
+            border-color: rgba(0, 255, 136, 0.5);
+        }
+
+        .admin-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00ff88, #00cc6a);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .admin-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5em;
+        }
+
+        .card-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .card-description {
+            color: #aaa;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* Кнопки */
+        .admin-btn {
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .admin-btn.danger {
+            background: linear-gradient(45deg, #ff4757, #ff3742);
+            color: white;
+        }
+
+        .admin-btn.warning {
+            background: linear-gradient(45deg, #ffa502, #ff9500);
+            color: white;
+        }
+
+        .admin-btn.info {
+            background: linear-gradient(45deg, #3742fa, #2f3542);
+            color: white;
+        }
+
+        /* Список игроков */
+        .player-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            border-radius: 10px;
+            background: rgba(20, 20, 20, 0.5);
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #333;
+            transition: background 0.3s ease;
+        }
+
+        .player-item:hover {
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .player-item:last-child {
+            border-bottom: none;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .player-name {
+            font-weight: bold;
+        }
+
+        .player-steamid {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        .player-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .player-actions .admin-btn {
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        /* Формы */
+        .admin-form {
+            background: rgba(20, 20, 20, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            margin-top: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30, 30, 30, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid #333;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .modal-title {
+            font-size: 1.5em;
+            color: #00ff88;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #ff4757;
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(30, 30, 30, 0.95);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px 20px;
+            color: white;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .notification.error {
+            border-color: #ff4757;
+            background: rgba(255, 71, 87, 0.1);
+        }
+
+        .notification.warning {
+            border-color: #ffa502;
+            background: rgba(255, 165, 2, 0.1);
+        }
+
+        /* Анимации */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .server-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .player-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .player-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #00cc6a, #00ff88);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Шапка админ панели -->
+        <div class="admin-header fade-in">
+            <h1>🎮 Garry's Mod Admin Panel</h1>
+            <div class="admin-info">
+                <div class="server-info">
+                    <div class="info-item">
+                        <strong>Сервер:</strong> DarkRP Server #1
+                    </div>
+                    <div class="info-item">
+                        <strong>Карта:</strong> rp_downtown_v4c_v2
+                    </div>
+                    <div class="info-item">
+                        <strong>Игроки:</strong> <span id="playerCount">12/64</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Uptime:</strong> 2д 14ч 32м
+                    </div>
+                </div>
+                <div class="admin-level">
+                    Супер Админ
+                </div>
+            </div>
+        </div>
+
+        <!-- Основная сетка меню -->
+        <div class="admin-grid">
+            <!-- Управление игроками -->
+            <div class="admin-card fade-in">
+                <div class="card-header">
+                    <div class="card-icon">👥</div>
+                    <div class="card-title">Управление игроками</div>
+                </div>
+                <div class="card-description">
+                    Кик, бан, телепорт и другие действия с игроками
+                </div>
+                
+                <div class="player-list" id="playerList">
+                    <!-- Список игроков будет загружен динамически -->
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <button class="admin-btn" onclick="refreshPlayers()">🔄 Обновить список</button>
+                    <button class="admin-btn info" data-action="kick" onclick="openModal('kickModal')">👢 Кик игрока</button>
+                    <button class="admin-btn danger" data-action="ban" onclick="openModal('banModal')">🚫 Забанить игрока</button>
+                </div>
+            </div>
+
+            <!-- Управление сервером -->
+            <div class="admin-card fade-in">
+                <div class="card-header">
+                    <div class="card-icon">⚙️</div>
+                    <div class="card-title">Управление сервером</div>
+                </div>
+                <div class="card-description">
+                    Настройки сервера, карты и игрового процесса
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="admin-btn" data-action="map" onclick="changeMap()">🗺️ Сменить карту</button>
+                    <button class="admin-btn warning" data-action="restart" onclick="restartServer()">🔄 Перезапустить сервер</button>
+                    <button class="admin-btn info" data-action="weather" onclick="openModal('weatherModal')">🌤️ Погода</button>
+                    <button class="admin-btn" data-action="time" onclick="openModal('timeModal')">⏰ Время</button>
+                </div>
+            </div>
+
+            <!-- Админ команды -->
+            <div class="admin-card fade-in">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <div class="card-icon">💬</div>
+                        <div class="card-title">Админ команды</div>
+                    </div>
+                    <div class="card-description">
+                        Быстрые команды для админов
+                    </div>
+                    
+                    <div class="admin-form">
+                        <div class="form-group">
+                            <label class="form-label">Команда:</label>
+                            <input type="text" class="form-input" id="adminCommand" placeholder="Введите команду...">
+                        </div>
+                        <button class="admin-btn" onclick="executeCommand()">▶️ Выполнить</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Логи и статистика -->
+            <div class="admin-card fade-in">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div class="card-title">Логи и статистика</div>
+                </div>
+                <div class="card-description">
+                    Просмотр логов сервера и статистики
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="admin-btn" onclick="openModal('logsModal')">📋 Просмотр логов</button>
+                    <button class="admin-btn info" onclick="openModal('statsModal')">📈 Статистика</button>
+                    <button class="admin-btn" onclick="downloadLogs()">💾 Скачать логи</button>
+                </div>
+            </div>
+
+            <!-- Настройки админа -->
+            <div class="admin-card fade-in">
+                <div class="card-header">
+                    <div class="card-icon">🔧</div>
+                    <div class="card-title">Настройки админа</div>
+                </div>
+                <div class="card-description">
+                    Персональные настройки админ панели
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="admin-btn" onclick="openModal('settingsModal')">⚙️ Настройки</button>
+                    <button class="admin-btn warning" onclick="changePassword()">🔒 Сменить пароль</button>
+                    <button class="admin-btn danger" onclick="logout()">🚪 Выйти</button>
+                </div>
+            </div>
+
+            <!-- Экстренные действия -->
+            <div class="admin-card fade-in">
+                <div class="card-header">
+                    <div class="card-icon">🚨</div>
+                    <div class="card-title">Экстренные действия</div>
+                </div>
+                <div class="card-description">
+                    Критические команды для экстренных ситуаций
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="admin-btn danger" onclick="emergencyStop()">🛑 Экстренная остановка</button>
+                    <button class="admin-btn warning" onclick="clearAllProps()">🧹 Очистить пропы</button>
+                    <button class="admin-btn" onclick="resetEconomy()">💰 Сбросить экономику</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальные окна -->
+    
+    <!-- Модальное окно кика -->
+    <div id="kickModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Кик игрока</h3>
+                <button class="modal-close" onclick="closeModal('kickModal')">&times;</button>
+            </div>
+            <div class="admin-form">
+                <div class="form-group">
+                    <label class="form-label">Выберите игрока:</label>
+                    <select class="form-input" id="kickPlayerSelect">
+                        <option value="">Выберите игрока...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Причина:</label>
+                    <input type="text" class="form-input" id="kickReason" placeholder="Причина кика...">
+                </div>
+                <button class="admin-btn danger" onclick="kickPlayer()">👢 Кикнуть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно бана -->
+    <div id="banModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Забанить игрока</h3>
+                <button class="modal-close" onclick="closeModal('banModal')">&times;</button>
+            </div>
+            <div class="admin-form">
+                <div class="form-group">
+                    <label class="form-label">Выберите игрока:</label>
+                    <select class="form-input" id="banPlayerSelect">
+                        <option value="">Выберите игрока...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Длительность (минуты):</label>
+                    <input type="number" class="form-input" id="banDuration" placeholder="0 = навсегда">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Причина:</label>
+                    <textarea class="form-input form-textarea" id="banReason" placeholder="Причина бана..."></textarea>
+                </div>
+                <button class="admin-btn danger" onclick="banPlayer()">🚫 Забанить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно погоды -->
+    <div id="weatherModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Управление погодой</h3>
+                <button class="modal-close" onclick="closeModal('weatherModal')">&times;</button>
+            </div>
+            <div class="admin-form">
+                <div class="form-group">
+                    <label class="form-label">Тип погоды:</label>
+                    <select class="form-input" id="weatherType">
+                        <option value="clear">Ясно</option>
+                        <option value="rain">Дождь</option>
+                        <option value="snow">Снег</option>
+                        <option value="fog">Туман</option>
+                        <option value="storm">Гроза</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Интенсивность (0-100):</label>
+                    <input type="range" class="form-input" id="weatherIntensity" min="0" max="100" value="50">
+                </div>
+                <button class="admin-btn" onclick="changeWeather()">🌤️ Изменить погоду</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно времени -->
+    <div id="timeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Управление временем</h3>
+                <button class="modal-close" onclick="closeModal('timeModal')">&times;</button>
+            </div>
+            <div class="admin-form">
+                <div class="form-group">
+                    <label class="form-label">Время:</label>
+                    <input type="time" class="form-input" id="gameTime">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Скорость времени:</label>
+                    <input type="range" class="form-input" id="timeSpeed" min="0" max="10" value="1" step="0.1">
+                </div>
+                <button class="admin-btn" onclick="changeTime()">⏰ Изменить время</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно логов -->
+    <div id="logsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Логи сервера</h3>
+                <button class="modal-close" onclick="closeModal('logsModal')">&times;</button>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 8px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px;">
+                <div id="serverLogs">
+                    [2024-01-15 14:30:25] Player 'PlayerName' connected<br>
+                    [2024-01-15 14:30:26] Player 'PlayerName' spawned<br>
+                    [2024-01-15 14:31:15] Admin 'AdminName' kicked 'BadPlayer'<br>
+                    [2024-01-15 14:32:00] Server map changed to 'rp_downtown_v4c_v2'<br>
+                    [2024-01-15 14:33:45] Player 'PlayerName' disconnected<br>
+                </div>
+            </div>
+            <div style="margin-top: 15px;">
+                <button class="admin-btn" onclick="refreshLogs()">🔄 Обновить</button>
+                <button class="admin-btn" onclick="clearLogs()">🗑️ Очистить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно статистики -->
+    <div id="statsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Статистика сервера</h3>
+                <button class="modal-close" onclick="closeModal('statsModal')">&times;</button>
+            </div>
+            <div class="admin-form">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h4 style="color: #00ff88; margin-bottom: 10px;">Общая статистика</h4>
+                        <p><strong>Всего игроков:</strong> 1,247</p>
+                        <p><strong>Онлайн сегодня:</strong> 89</p>
+                        <p><strong>Средний онлайн:</strong> 45</p>
+                        <p><strong>Максимальный онлайн:</strong> 64</p>
+                    </div>
+                    <div>
+                        <h4 style="color: #00ff88; margin-bottom: 10px;">За последние 24ч</h4>
+                        <p><strong>Новых игроков:</strong> 23</p>
+                        <p><strong>Киков:</strong> 5</p>
+                        <p><strong>Банов:</strong> 2</p>
+                        <p><strong>Смен карт:</strong> 3</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно настроек -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Настройки админа</h3>
+                <button class="modal-close" onclick="closeModal('settingsModal')">&times;</button>
+            </div>
+            <div class="admin-form">
+                <div class="form-group">
+                    <label class="form-label">Тема интерфейса:</label>
+                    <select class="form-input" id="themeSelect">
+                        <option value="dark">Темная</option>
+                        <option value="light">Светлая</option>
+                        <option value="auto">Автоматически</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Язык:</label>
+                    <select class="form-input" id="languageSelect">
+                        <option value="ru">Русский</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Уведомления:</label>
+                    <input type="checkbox" id="notificationsEnabled" checked> Включить уведомления
+                </div>
+                <button class="admin-btn" onclick="saveSettings()">💾 Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомления -->
+    <div id="notification" class="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <!-- Подключаем систему разрешений -->
+    <script src="admin_permissions.js"></script>
+    
+    <script>
+        // Данные игроков (в реальном проекте будут загружаться с сервера)
+        const players = [
+            { id: 1, name: "PlayerOne", steamid: "STEAM_0:1:123456789", ping: 45 },
+            { id: 2, name: "PlayerTwo", steamid: "STEAM_0:1:987654321", ping: 32 },
+            { id: 3, name: "PlayerThree", steamid: "STEAM_0:1:456789123", ping: 67 },
+            { id: 4, name: "PlayerFour", steamid: "STEAM_0:1:789123456", ping: 23 },
+            { id: 5, name: "PlayerFive", steamid: "STEAM_0:1:321654987", ping: 89 }
+        ];
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPlayers();
+            updateServerInfo();
+            setInterval(updateServerInfo, 30000); // Обновление каждые 30 секунд
+        });
+
+        // Загрузка списка игроков
+        function loadPlayers() {
+            const playerList = document.getElementById('playerList');
+            const kickSelect = document.getElementById('kickPlayerSelect');
+            const banSelect = document.getElementById('banPlayerSelect');
+            
+            playerList.innerHTML = '';
+            kickSelect.innerHTML = '<option value="">Выберите игрока...</option>';
+            banSelect.innerHTML = '<option value="">Выберите игрока...</option>';
+            
+            players.forEach(player => {
+                // Добавляем в список игроков
+                const playerItem = document.createElement('div');
+                playerItem.className = 'player-item';
+                playerItem.innerHTML = `
+                    <div class="player-info">
+                        <div class="player-avatar">${player.name.charAt(0)}</div>
+                        <div>
+                            <div class="player-name">${player.name}</div>
+                            <div class="player-steamid">${player.steamid} (${player.ping}ms)</div>
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        <button class="admin-btn" data-action="teleport" onclick="teleportToPlayer(${player.id})">📍</button>
+                        <button class="admin-btn warning" data-action="spectate" onclick="spectatePlayer(${player.id})">👁️</button>
+                        <button class="admin-btn danger" data-action="kick" onclick="quickKick(${player.id})">👢</button>
+                    </div>
+                `;
+                playerList.appendChild(playerItem);
+                
+                // Добавляем в селекты
+                const option1 = new Option(player.name, player.id);
+                const option2 = new Option(player.name, player.id);
+                kickSelect.add(option1);
+                banSelect.add(option2);
+            });
+        }
+
+        // Обновление информации о сервере
+        function updateServerInfo() {
+            const playerCount = document.getElementById('playerCount');
+            playerCount.textContent = `${players.length}/64`;
+        }
+
+        // Открытие модального окна
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        // Закрытие модального окна
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Показ уведомления
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Обновление списка игроков
+        function refreshPlayers() {
+            showNotification('Список игроков обновлен', 'success');
+            loadPlayers();
+        }
+
+        // Кик игрока
+        function kickPlayer() {
+            if (!adminPermissions.canKickPlayer()) {
+                showNotification('У вас нет разрешения на кик игроков', 'error');
+                return;
+            }
+            
+            const playerId = document.getElementById('kickPlayerSelect').value;
+            const reason = document.getElementById('kickReason').value;
+            
+            if (!playerId) {
+                showNotification('Выберите игрока', 'error');
+                return;
+            }
+            
+            const player = players.find(p => p.id == playerId);
+            
+            // Логируем действие
+            adminLogger.log(
+                adminPermissions.getCurrentUser().name,
+                'player.kick',
+                player.name,
+                `Причина: ${reason || 'Не указана'}`
+            );
+            
+            showNotification(`Игрок ${player.name} кикнут. Причина: ${reason || 'Не указана'}`, 'success');
+            closeModal('kickModal');
+            
+            // Очистка формы
+            document.getElementById('kickPlayerSelect').value = '';
+            document.getElementById('kickReason').value = '';
+        }
+
+        // Бан игрока
+        function banPlayer() {
+            if (!adminPermissions.canBanPlayer()) {
+                showNotification('У вас нет разрешения на бан игроков', 'error');
+                return;
+            }
+            
+            const playerId = document.getElementById('banPlayerSelect').value;
+            const duration = document.getElementById('banDuration').value;
+            const reason = document.getElementById('banReason').value;
+            
+            if (!playerId) {
+                showNotification('Выберите игрока', 'error');
+                return;
+            }
+            
+            const player = players.find(p => p.id == playerId);
+            const durationText = duration ? `${duration} минут` : 'навсегда';
+            
+            // Логируем действие
+            adminLogger.log(
+                adminPermissions.getCurrentUser().name,
+                'player.ban',
+                player.name,
+                `Длительность: ${durationText}, Причина: ${reason || 'Не указана'}`
+            );
+            
+            showNotification(`Игрок ${player.name} забанен на ${durationText}. Причина: ${reason || 'Не указана'}`, 'success');
+            closeModal('banModal');
+            
+            // Очистка формы
+            document.getElementById('banPlayerSelect').value = '';
+            document.getElementById('banDuration').value = '';
+            document.getElementById('banReason').value = '';
+        }
+
+        // Быстрый кик
+        function quickKick(playerId) {
+            const player = players.find(p => p.id == playerId);
+            if (confirm(`Вы уверены, что хотите кикнуть игрока ${player.name}?`)) {
+                showNotification(`Игрок ${player.name} кикнут`, 'success');
+            }
+        }
+
+        // Телепорт к игроку
+        function teleportToPlayer(playerId) {
+            if (!adminPermissions.canTeleportToPlayer()) {
+                showNotification('У вас нет разрешения на телепорт', 'error');
+                return;
+            }
+            
+            const player = players.find(p => p.id == playerId);
+            
+            // Логируем действие
+            adminLogger.log(
+                adminPermissions.getCurrentUser().name,
+                'player.teleport',
+                player.name,
+                'Телепорт к игроку'
+            );
+            
+            showNotification(`Телепорт к игроку ${player.name}`, 'success');
+        }
+
+        // Наблюдение за игроком
+        function spectatePlayer(playerId) {
+            if (!adminPermissions.canSpectatePlayer()) {
+                showNotification('У вас нет разрешения на наблюдение', 'error');
+                return;
+            }
+            
+            const player = players.find(p => p.id == playerId);
+            
+            // Логируем действие
+            adminLogger.log(
+                adminPermissions.getCurrentUser().name,
+                'player.spectate',
+                player.name,
+                'Наблюдение за игроком'
+            );
+            
+            showNotification(`Наблюдение за игроком ${player.name}`, 'success');
+        }
+
+        // Смена карты
+        function changeMap() {
+            if (!adminPermissions.canChangeMap()) {
+                showNotification('У вас нет разрешения на смену карты', 'error');
+                return;
+            }
+            
+            const maps = ['rp_downtown_v4c_v2', 'rp_evocity_v4b1', 'rp_rockford_v2b1', 'rp_southside'];
+            const randomMap = maps[Math.floor(Math.random() * maps.length)];
+            
+            // Логируем действие
+            adminLogger.log(
+                adminPermissions.getCurrentUser().name,
+                'server.map',
+                randomMap,
+                'Смена карты'
+            );
+            
+            showNotification(`Карта изменена на: ${randomMap}`, 'success');
+        }
+
+        // Перезапуск сервера
+        function restartServer() {
+            if (!adminPermissions.canRestartServer()) {
+                showNotification('У вас нет разрешения на перезапуск сервера', 'error');
+                return;
+            }
+            
+            if (confirm('Вы уверены, что хотите перезапустить сервер? Все игроки будут отключены.')) {
+                // Логируем действие
+                adminLogger.log(
+                    adminPermissions.getCurrentUser().name,
+                    'server.restart',
+                    'Server',
+                    'Перезапуск сервера'
+                );
+                
+                showNotification('Сервер перезапускается...', 'warning');
+            }
+        }
+
+        // Изменение погоды
+        function changeWeather() {
+            const weatherType = document.getElementById('weatherType').value;
+            const intensity = document.getElementById('weatherIntensity').value;
+            showNotification(`Погода изменена на: ${weatherType} (${intensity}%)`, 'success');
+            closeModal('weatherModal');
+        }
+
+        // Изменение времени
+        function changeTime() {
+            const time = document.getElementById('gameTime').value;
+            const speed = document.getElementById('timeSpeed').value;
+            showNotification(`Время изменено на: ${time}, скорость: ${speed}x`, 'success');
+            closeModal('timeModal');
+        }
+
+        // Выполнение команды
+        function executeCommand() {
+            const command = document.getElementById('adminCommand').value;
+            if (!command) {
+                showNotification('Введите команду', 'error');
+                return;
+            }
+            
+            showNotification(`Команда выполнена: ${command}`, 'success');
+            document.getElementById('adminCommand').value = '';
+        }
+
+        // Обновление логов
+        function refreshLogs() {
+            showNotification('Логи обновлены', 'success');
+        }
+
+        // Очистка логов
+        function clearLogs() {
+            if (confirm('Вы уверены, что хотите очистить все логи?')) {
+                document.getElementById('serverLogs').innerHTML = '';
+                showNotification('Логи очищены', 'success');
+            }
+        }
+
+        // Скачивание логов
+        function downloadLogs() {
+            showNotification('Логи скачиваются...', 'success');
+        }
+
+        // Сохранение настроек
+        function saveSettings() {
+            const theme = document.getElementById('themeSelect').value;
+            const language = document.getElementById('languageSelect').value;
+            const notifications = document.getElementById('notificationsEnabled').checked;
+            
+            showNotification('Настройки сохранены', 'success');
+            closeModal('settingsModal');
+        }
+
+        // Смена пароля
+        function changePassword() {
+            const newPassword = prompt('Введите новый пароль:');
+            if (newPassword) {
+                showNotification('Пароль изменен', 'success');
+            }
+        }
+
+        // Выход
+        function logout() {
+            if (confirm('Вы уверены, что хотите выйти из админ панели?')) {
+                showNotification('Выход выполнен', 'success');
+                // В реальном проекте здесь будет редирект на страницу входа
+            }
+        }
+
+        // Экстренная остановка
+        function emergencyStop() {
+            if (confirm('ВНИМАНИЕ! Это действие остановит сервер немедленно. Продолжить?')) {
+                showNotification('Экстренная остановка сервера...', 'error');
+            }
+        }
+
+        // Очистка пропов
+        function clearAllProps() {
+            if (confirm('Очистить все пропы на карте?')) {
+                showNotification('Все пропы очищены', 'success');
+            }
+        }
+
+        // Сброс экономики
+        function resetEconomy() {
+            if (confirm('Сбросить экономику сервера? Это действие необратимо.')) {
+                showNotification('Экономика сброшена', 'warning');
+            }
+        }
+
+        // Закрытие модальных окон по клику вне их
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Обработка клавиш
+        document.addEventListener('keydown', function(event) {
+            // ESC для закрытия модальных окон
+            if (event.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    if (modal.style.display === 'block') {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
