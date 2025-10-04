@@ -1,0 +1,9 @@
+{
+	"title": "Admin Menu",
+	"type": "ServerContent",
+	"tags": [ "admin", "management" ],
+	"ignore": [
+		"*.txt",
+		"*.md"
+	]
+}
